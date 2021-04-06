@@ -76,8 +76,32 @@ module.exports = class functions {
     return result.addLabelsToLabelable.labelable
   }
 
-  async getIssueLastTimelineEvent(projectColumn) {
+  async removeLabelFromIssue(issueID, labelID) {
+    const removeLabelMutation = `mutation removeLabel($issueId: ID!, $labelId: [ID!]!){ 
+      removeLabelsFromLabelable(input:{labelIds:$labelId, labelableId:$issueId}){
+        labelable {
+          ... on Issue {
+            id
+          }
+        }
+      }
+    }`;
 
+    const variables = {
+      issueId: issueID,
+      labelId: labelID
+    }
+    const result = await this.octokit.graphql(removeLabelMutation, variables)
+    if (!result) {
+      this.core.setFailed('removeLabelFromIssue GraphQL request failed')
+    } 
+    else {
+      console.log(`Removed Label: nodeId: ${result.removeLabelsFromLabelable.labelable.id}`)
+    } 
+    return result.removeLabelsFromLabelable.labelable
+  }
+
+  async getIssueLastTimelineEvent(projectColumn) {
     const getLastTimelineEvent = `query($projectColumnID: ID!) { 
       node(id: $projectColumnID) { 
         ... on ProjectColumn { 
@@ -120,8 +144,4 @@ module.exports = class functions {
     } 
     return result
   }
-
-
-
-
 }
