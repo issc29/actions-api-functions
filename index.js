@@ -149,7 +149,6 @@ module.exports = class functions {
     const getIssueInfoFromProjectCardQuery = `query($projectCardID: ID!) { 
       node(id:$projectCardID) {
         ... on ProjectCard{
-          __typename
           content{
             ... on Issue{
               repository {
