@@ -227,4 +227,28 @@ module.exports = class functions {
     return result.node
   }
 
+  async createIssue(repositoryId, body, title) {
+    const createIssueMutation = `mutation createIssue($repositoryId: ID!, $body: String!,  $title: String!){ 
+      createIssue(input:{body:$body, title:$title, repositoryId:$repositoryId}) {
+        issue{
+          id,
+          number,
+          title
+        }
+      }
+    }`;
+
+    const variables = {
+      repositoryId: repositoryId,
+      body: body,
+      title: title
+    }
+    const result = await this.octokit.graphql(createIssueMutation, variables)
+    if (!result) {
+      this.core.setFailed('createIssue GraphQL request failed')
+    } 
+
+    return result
+  }
+
 }
