@@ -60,7 +60,8 @@ module.exports = class functions {
               name,
               owner {
                 login
-              }
+              },
+              id
             },
             number,
             title,
