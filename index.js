@@ -67,7 +67,12 @@ module.exports = class functions {
             author{
               login
             },
-            body
+            body,
+            labels(first:15){
+              nodes{
+                name
+              }
+            }
           }
         }
       }`;
