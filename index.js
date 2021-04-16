@@ -51,6 +51,40 @@ module.exports = class functions {
     return result.node
   }
 
+  async getIssueInfoFromNodeID(issueNodeID) {
+    const getIssueInfoQuery = `query($issueNodeID: ID!) { 
+        node(id: $issueNodeID)
+        {
+          ... on Issue {
+            repository{
+              name,
+              owner {
+                login
+              }
+            },
+            number,
+            title,
+            author{
+              login
+            },
+            body
+          }
+        }
+      }`;
+
+    const variables = {
+      issueNodeID: issueNodeID
+    }
+    const result = await this.octokit.graphql(getIssueInfoQuery, variables)
+    if (!result) {
+      this.core.setFailed('getIssueInfoFromNodeID GraphQL request failed')
+    } 
+    else {
+      console.log(`Issue Number: ${result.node.number}`)
+    } 
+    return result.node
+  }
+
   async addLabelToIssue(issueID, labelID) {
     const addLabelMutation = `mutation addLabel($issueId: ID!, $labelId: [ID!]!){ 
       addLabelsToLabelable(input:{labelIds:$labelId, labelableId:$issueId}){
