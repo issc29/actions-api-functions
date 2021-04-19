@@ -91,6 +91,36 @@ module.exports = class functions {
     return result.node
   }
 
+  async getProjectInfoFromNodeID(issueNodeID) {
+    const getProjectInfoQuery = `query($issueNodeID: ID!) { 
+        node(id: $issueNodeID)
+        {
+          ... on Issue {
+            projectCards {
+              nodes{
+                id,
+                project{
+                  id
+                }
+              }
+            }
+          }
+        }
+      }`;
+
+    const variables = {
+      issueNodeID: issueNodeID
+    }
+    const result = await this.octokit.graphql(getProjectInfoQuery, variables)
+    if (!result) {
+      this.core.setFailed('getProjectInfoFromNodeID GraphQL request failed')
+    } 
+    else {
+      console.log(`getProjectInfoFromNodeID GraphQL completed`)
+    } 
+    return result.node
+  }
+
   async addLabelToIssue(issueID, labelID) {
     const addLabelMutation = `mutation addLabel($issueId: ID!, $labelId: [ID!]!){ 
       addLabelsToLabelable(input:{labelIds:$labelId, labelableId:$issueId}){
@@ -254,5 +284,36 @@ module.exports = class functions {
 
     return result
   }
+
+
+  async moveIssueColumn(cardId, columnId) {
+    const setIssueColumnToInProgress = `mutation moveProjectCard($cardId: ID!, $columnId: ID!){ 
+      moveProjectCard(input:{cardId:$cardId,columnId:$columnId}) {
+        clientMutationId
+        cardEdge{
+          node{
+            column{
+              id
+            }
+          }
+        }
+      }
+     }`;
+
+    const variables = {
+      cardId: cardId,
+      columnId: columnId
+    }
+    const result = await this.octokit.graphql(setIssueColumnToInProgress, variables)
+    if (!result) {
+      this.core.setFailed('moveIssueColumn GraphQL request failed')
+    } 
+    else {
+      console.log(`Move Column GraphQL completed`)
+    } 
+    return result
+  }
+
+
 
 }
