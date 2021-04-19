@@ -314,6 +314,27 @@ module.exports = class functions {
     return result
   }
 
+  async updateIssueBody(issueID, comment) {
+    const UpdateIssueBodyMutation = `mutation($issueID: ID!, $body: String!){
+      updateIssue(input:{id:$issueID, body: $body}){
+          issue{
+              id
+          }
+      }
+  }`;
+
+    const variables = {
+      issueId: issueID,
+      body: comment,
+    }
+    const result = await this.octokit.graphql(UpdateIssueBodyMutation, variables)
+    if (!result) {
+      this.core.setFailed('UpdateIssueBody GraphQL request failed')
+    } 
+
+    return result
+  }
+
 
 
 }
