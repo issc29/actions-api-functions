@@ -335,6 +335,26 @@ module.exports = class functions {
     return result
   }
 
+  async updateIssueState(issueID, state) {
+    state = state.toUpperCase()
 
+    const UpdateIssueStateMutation = `mutation($issueID: ID!, $state: IssueState!){
+      updateIssue(input:{id:$issueID, state: $state}){
+          issue{
+              id
+          }
+      }
+  }`;
 
+    const variables = {
+      issueId: issueID,
+      state: state,
+    }
+    const result = await this.octokit.graphql(UpdateIssueStateMutation, variables)
+    if (!result) {
+      this.core.setFailed('updateIssueState GraphQL request failed')
+    } 
+
+    return result
+  }
 }
