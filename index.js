@@ -411,7 +411,9 @@ module.exports = class functions {
     const reGitHubOrg = /.*GitHub Organization\(s\)\*\* -(.*)/
     if(reGitHubOrg.test(body)) {
       var githubOrg = body.match(/.*GitHub Organization\(s\)\*\* -(.*)/)[1].trim()
-      return githubOrg
+      if(githubOrg != '`replace_with_GitHub_org`' && githubOrg != '') {
+        return githubOrg
+      }
     }
     throw new Error(':wave: Trial Error: Could not detect POC Organization to enable!')
   }
