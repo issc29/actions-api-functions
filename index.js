@@ -382,6 +382,21 @@ module.exports = class functions {
     return type
   }
 
+  getRegion(labels, regionLabels) {
+    var region = ''
+    for(const label of labels) {
+      if(regionLabels.includes(label.name)) {
+        region = label.name
+      }
+    }
+
+    if(!region) {
+      throw new Error(':wave: Trial Error: Could not detect the Region Label!')
+    }
+
+    return region
+  }
+
   getPOCObjectLink(body) {
     try { 
       var pocLink = ''
